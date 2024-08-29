@@ -3,6 +3,7 @@ from django.db import models
 
 
 class User(AbstractUser):
+    id = models.AutoField(primary_key=True)
     username = models.CharField(max_length=64, unique=True)
     email = models.EmailField(max_length=64, unique=True)
     first_name = models.CharField(max_length=64)
@@ -44,6 +45,7 @@ class Listing(models.Model):
         return self.title
     
 class Bid(models.Model):
+    id = models.AutoField(primary_key=True)
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bids")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bids")
     amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -59,6 +61,7 @@ class Bid(models.Model):
         return f"{self.user.username} bid {self.amount} on {self.listing.title}"
     
 class Comment(models.Model):
+    id = models.AutoField(primary_key=True)
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="comments")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
     comment = models.TextField()
@@ -74,6 +77,7 @@ class Comment(models.Model):
         return f"{self.user.username} commented on {self.listing.title}"
     
 class Watchlist(models.Model):
+    id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="watchlist")
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="watchlist")
 
@@ -87,6 +91,7 @@ class Watchlist(models.Model):
         return f"{self.user.username} is watching {self.listing.title}"
     
 class category(models.Model):
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=64)
 
     def __str__(self):

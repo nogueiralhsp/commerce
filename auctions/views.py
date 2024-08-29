@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from .models import User, Listing, Bid, Comment
+from .models import User, Listing, Bid, Comment, Watchlist
 
 # index view
 def index(request):
@@ -95,13 +95,14 @@ def listing_create_view(request):
         return HttpResponseRedirect(reverse("index"))
     return render(request, "auctions/listing_create.html")
 
-def listing_view(request, listing_id):
+def listing_view(request, listing_id, user=None):
     listing = Listing.objects.get(pk=listing_id)
     current_bid = biggest_bid(listing_id)
+
     return render(request, "auctions/listing_view.html", {
         "listing": listing,
         "current_bid": current_bid,
-        "comments": listing.comments.all().order_by('-created')
+        "comments": listing.comments.all().order_by('-created'),
     })
 
 def listing_edit_view(request, listing_id):
@@ -128,6 +129,7 @@ def listing_toggle_active_view(request, listing_id):
     print (f'listing.active: {listing.active}')
     listing.save()
     return redirect('listing_view', listing_id=listing_id)
+
 ################### Biddings ###################
 def biggest_bid (listing_id):
     listing = Listing.objects.get(pk=listing_id)
@@ -136,7 +138,6 @@ def biggest_bid (listing_id):
         return listing.starting_bid
     else:
         return max(bids, key=lambda x: x.amount).amount
-
 
 def create_bid_view(request, listing_id):
     # making sure the request is a POST request
@@ -195,14 +196,16 @@ def create_comment_view (request, listing_id):
 ################### Watchlist ###################
 def watchlist_toggle_view(request, listing_id):
     if request.method == "POST":
-        listing_id = request.POST["listing_id"]
         listing = Listing.objects.get(pk=listing_id)
         user = request.user
-        print (user.watchlist.all())
-        print ('debug watchlist_toggle_view')
-        if listing in user.watchlist.all():
-            user.watchlist.remove(listing)
+        watchlist = Watchlist.objects.filter(user=user, listing=listing)
+        if watchlist:
+            watchlist.delete()
         else:
-            user.watchlist.add(listing)
+            watchlist = Watchlist.objects.create(
+                user=user,
+                listing=listing
+            )
+            watchlist.save()
         return HttpResponseRedirect(reverse('listing_view', args=(listing_id,)))
     return HttpResponseRedirect(reverse('index'))

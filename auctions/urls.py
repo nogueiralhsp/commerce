@@ -19,5 +19,7 @@ urlpatterns = [
     # bid and comment views
     path("bid_create/<int:listing_id>", views.create_bid_view, name="bid_create"),
     path("comment_create/<int:listing_id>", views.create_comment_view, name="comment_create"),
+
+    # watchlist views
     path("watchlist_toggle/<int:listing_id>", views.watchlist_toggle_view, name="watchlist_toggle"),
 ]
