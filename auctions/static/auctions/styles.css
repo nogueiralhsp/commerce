@@ -1,0 +1,9 @@
+body {
+    padding: 10px;
+    /* background-color: gray; */
+}
+
+.card-img-top{
+    max-width: 200px;
+    object-fit: cover;
+}
