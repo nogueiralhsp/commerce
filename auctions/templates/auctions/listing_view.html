@@ -33,12 +33,16 @@
     {% endif %}
 {% else %}
     
-
-    <form action="{% url 'watchlist_toggle' listing.id %}" method="POST">
+    {{watching}}
+    
     {% if False %}
-    <input class="btn btn-primary" type="submit" name="" id="" value="Remove from Watchlist">
+        <form action="{% url 'watchlist_add' listing.id %}" method="POST">
+            <input class="btn btn-primary" type="submit" name="" id="" value="Remove from Watchlist">
+        </form>
     {% else %}
-    <input class="btn btn-primary" type="submit" name="" id="" value="Add to Watchlist">
+        <form action="{% url 'watchlist_remove' listing.id %}" method="post"></form>
+            <input class="btn btn-primary" type="submit" name="" id="" value="Add to Watchlist">
+        </form>
     {% endif %}
     
 {% endif %}

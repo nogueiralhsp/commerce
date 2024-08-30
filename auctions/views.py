@@ -98,11 +98,18 @@ def listing_create_view(request):
 def listing_view(request, listing_id, user=None):
     listing = Listing.objects.get(pk=listing_id)
     current_bid = biggest_bid(listing_id)
+    logged_user = request.user
+    print (f'logged_user: {logged_user.id}')
+    print (f'listing: {listing.id}')
+
+    Watchlist.watchlist_get(logged_user, listing)
+
 
     return render(request, "auctions/listing_view.html", {
         "listing": listing,
         "current_bid": current_bid,
         "comments": listing.comments.all().order_by('-created'),
+        "watching": True,
     })
 
 def listing_edit_view(request, listing_id):
@@ -194,18 +201,23 @@ def create_comment_view (request, listing_id):
             })
         
 ################### Watchlist ###################
-def watchlist_toggle_view(request, listing_id):
+def watchlist_add_view(request, listing_id):
     if request.method == "POST":
         listing = Listing.objects.get(pk=listing_id)
         user = request.user
-        watchlist = Watchlist.objects.filter(user=user, listing=listing)
-        if watchlist:
-            watchlist.delete()
-        else:
-            watchlist = Watchlist.objects.create(
-                user=user,
-                listing=listing
-            )
-            watchlist.save()
+        watchlist_add_view(user, listing)
         return HttpResponseRedirect(reverse('listing_view', args=(listing_id,)))
     return HttpResponseRedirect(reverse('index'))
+
+def watchlist_remove_view(request, listing_id):
+    if request.method == "POST":
+        listing = Listing.objects.get(pk=listing_id)
+        user = request.user
+        watchlist_remove_view(user, listing)
+        return HttpResponseRedirect(reverse('listing_view', args=(listing_id,)))
+    return HttpResponseRedirect(reverse('index'))
+
+def user_is_watching_listing(request):
+    ''' returnis true if user is watching the listing '''
+    return Watchlist.watchlist_get(request.user, request.listing)
+    

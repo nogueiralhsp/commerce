@@ -84,12 +84,22 @@ class Watchlist(models.Model):
     def __str__(self):
         return f"{self.user.username} is watching {self.listing.title}"
     
-    def __repr__(self):
-        return f"{self.user.username} is watching {self.listing.title}"
+    def watchlist_add(self, user, listing):
+        self.user = user
+        self.listing = listing
+        self.save()
     
-    def __unicode__(self):
-        return f"{self.user.username} is watching {self.listing.title}"
-    
+    def watchlist_remove(self, user, listing):
+        self.user = user
+        self.listing = listing
+        self.delete()
+
+    def watchlist_get (user, listing):
+        watching = Watchlist.objects.filter(user=user, listing=listing).exists()
+        print (f'watching: {watching}')
+        return Watchlist.objects.filter(user=user, listing=listing).exists()
+        
+
 class category(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=64)

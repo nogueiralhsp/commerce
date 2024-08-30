@@ -21,5 +21,6 @@ urlpatterns = [
     path("comment_create/<int:listing_id>", views.create_comment_view, name="comment_create"),
 
     # watchlist views
-    path("watchlist_toggle/<int:listing_id>", views.watchlist_toggle_view, name="watchlist_toggle"),
+    path("watchlist_add/<int:listing_id>", views.watchlist_add_view, name="watchlist_add"),
+    path("watchlist_remove/<int:listing_id>", views.watchlist_remove_view, name="watchlist_remove"),
 ]
